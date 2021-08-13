@@ -1,0 +1,60 @@
+name: Check
+
+on:
+    push:
+
+jobs:
+    example-with-run:
+        strategy:
+            matrix:
+                os: [windows-latest, macos-latest, ubuntu-latest]
+                dotnet: [5.0.400]
+        runs-on: ${{ matrix.os }}
+
+        steps:
+            -   uses: actions/checkout@v2
+
+            -   name: Setup .NET Core
+                uses: actions/setup-dotnet@v1
+                with:
+                    dotnet-version: ${{ matrix.dotnet }}
+
+            -   name: Restore tools
+                run: dotnet tool restore
+
+            -   name: Run
+                run: dotnet fake build -t run
+
+    example-with-publish:
+        strategy:
+            matrix:
+                os: [windows-latest, macos-latest, ubuntu-latest]
+                dotnet: [5.0.400]
+            fail-fast: false
+        runs-on: ${{ matrix.os }}
+
+        steps:
+            -   uses: actions/checkout@v2
+
+            -   name: Setup .NET Core
+                uses: actions/setup-dotnet@v1
+                with:
+                    dotnet-version: ${{ matrix.dotnet }}
+
+            -   name: Restore tools
+                run: dotnet tool restore
+
+            -   name: Publish
+                run: dotnet fake build -t release
+
+            -   name: Run on win
+                if: ${{ matrix.os == 'windows-latest' }}
+                run: dist/win-x64/BugExample
+
+            -   name: Run on osx
+                if: ${{ matrix.os == 'macos-latest' }}
+                run: dist/osx-x64/BugExample
+
+            -   name: Run on linux
+                if: ${{ matrix.os == 'ubuntu-latest' }}
+                run: dist/linux-x64/BugExample

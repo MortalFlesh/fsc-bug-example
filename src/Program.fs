@@ -9,14 +9,10 @@ module DomainResolverLibrary =
                 checker.GetProjectOptionsFromScript(file, SourceText.ofString contents)
                 |> Async.RunSynchronously
 
-            printfn "ProjectOptions: %A" projOptions
-
-            match errors with
-            | [] -> ()
-            | errors -> printfn "ProjectOptions.Errors: %A" errors
+            sprintf "ProjectOptions: %A" projOptions |> Ok
 
         with e ->
-            eprintfn "GetProjectOptionsFromScript.Error: %A" e
+            sprintf "GetProjectOptionsFromScript.Error: %A" e |> Error
 
     let parse file =
         let checker = FSharpChecker.Create()
@@ -33,7 +29,13 @@ let main argv =
 
     let projectFile = "domain/domain.fsx"
 
-    projectFile |> DomainResolverLibrary.parse
+    match projectFile |> DomainResolverLibrary.parse with
+    | Ok message ->
+        printfn "This works fine:\n%s" message
+        separator()
+        0
 
-    separator()
-    0
+    | Error error ->
+        eprintfn "This doesn't work as expected:\n%s" error
+        separator()
+        1

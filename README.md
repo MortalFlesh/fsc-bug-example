@@ -1,6 +1,8 @@
 FSCS Bug Example
 ================
 
+[![Check](https://github.com/MortalFlesh/fscs-bug-example/actions/workflows/checks.yaml/badge.svg)](https://github.com/MortalFlesh/fscs-bug-example/actions/workflows/checks.yaml)
+
 ## Normal behavior
 
 - `dotnet run`
